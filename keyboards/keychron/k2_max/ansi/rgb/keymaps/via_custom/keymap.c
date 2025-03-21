@@ -52,9 +52,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_ESC,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   KC_PSCR,  KC_DEL,   RGB_MOD,
      KC_GRV,   KC_1,     KC_2,     KC_3,     KC_4,     KC_5,     KC_6,     KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSPC,            KC_PGUP,
      KC_TAB,   KC_Q,     MT(MOD_LGUI,KC_W),  KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,            KC_PGDN,
-     KC_LCTL,  TD(TD_A_LAYER),     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,            KC_ENT,             KC_HOME,
-     KC_LSFT,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,            KC_RSFT,  KC_UP,    KC_END,
-     KC_LCTL,  KC_LGUI,  KC_LALT,                                LT(4,KC_SPC),                                 KC_RALT, MO(WIN_FN),KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
+     KC_LCTL,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,            KC_ENT,             KC_HOME,
+     SC_LSPO,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,            SC_RSPC,  KC_UP,    KC_END,
+     KC_LCTL,  KC_LGUI,  KC_LALT,                                LT(4,KC_SPC),                                 TD(TD_A_LAYER), MO(WIN_FN),KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
 [WIN_FN] = LAYOUT_ansi_84(
      _______,  KC_BRID,  KC_BRIU,  KC_TASK,  KC_FILE,  RGB_VAD,  RGB_VAI,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,  KC_VOLU,  _______,  _______,  RGB_TOG,
@@ -98,17 +98,17 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 void dance_a_layer_alt_finished(tap_dance_state_t *state, void *user_data) {
     if (state->count == 1 && !state->pressed) {
     //if (state->count == 1 && !state->interrupted && !state->pressed) {
-        tap_code(KC_A);  // 短押しなら「A」を入力
+        tap_code(KC_RALT);  // 短押しなら「A」を入力
     } else {
         layer_on(WIN_A_TAP_DANCE);  // 長押しならレイヤー1へ
-        register_code(KC_LALT);  // Altを押す
+        register_code(KC_RALT);  // Altを押す
         alt_held = true;
     }
 }
 
 void dance_a_layer_alt_reset(tap_dance_state_t *state, void *user_data) {
     if (alt_held) {
-        unregister_code(KC_LALT);  // Altキーを離す
+        unregister_code(KC_RALT);  // Altキーを離す
         layer_off(WIN_A_TAP_DANCE);  // レイヤー1を解除
         alt_held = false;
     }
