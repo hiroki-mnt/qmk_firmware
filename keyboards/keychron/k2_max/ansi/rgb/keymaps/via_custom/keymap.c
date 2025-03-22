@@ -23,11 +23,11 @@ enum layers {
     WIN_BASE,
     WIN_FN,
     WIN_CUSTOM1,
-    WIN_A_TAP_DANCE,
+    WIN_ALT_LAYER,
 };
 
 enum {
-    TD_A_LAYER = 0,  // タップダンスのキー定義
+    TD_ALT_LAYER = 0,  // タップダンスのキー定義
 };
 
 // clang-format off
@@ -54,7 +54,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_TAB,   KC_Q,     MT(MOD_LGUI,KC_W),  KC_E,     KC_R,     KC_T,     KC_Y,     KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,            KC_PGDN,
      KC_LCTL,  KC_A,     KC_S,     KC_D,     KC_F,     KC_G,     KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,            KC_ENT,             KC_HOME,
      SC_LSPO,            KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,            SC_RSPC,  KC_UP,    KC_END,
-     KC_LCTL,  KC_LGUI,  KC_LALT,                                LT(4,KC_SPC),                                 TD(TD_A_LAYER), MO(WIN_FN),KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
+     KC_LCTL,  KC_LGUI,  KC_LALT,                                LT(4,KC_SPC),                                 TD(TD_ALT_LAYER), MO(WIN_FN),KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
 [WIN_FN] = LAYOUT_ansi_84(
      _______,  KC_BRID,  KC_BRIU,  KC_TASK,  KC_FILE,  RGB_VAD,  RGB_VAI,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,  KC_VOLU,  _______,  _______,  RGB_TOG,
@@ -72,7 +72,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      _______,            _______,  _______,  _______,  _______,  KC_BSPC,  KC_LANGUAGE_1,  KC_PGDN,  _______,  _______,  _______,            _______,  _______,  _______,
      _______,  _______,  _______,                                _______,                                _______,  _______,  _______,  _______,  _______,  _______),
 
-[WIN_A_TAP_DANCE] = LAYOUT_ansi_84(
+[WIN_ALT_LAYER] = LAYOUT_ansi_84(
     _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,
     _______,  _______,  _______,  _______,  _______,    _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
     _______,  _______,  _______,  _______,  S(KC_TAB),  KC_TAB,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
@@ -88,7 +88,7 @@ static bool alt_held = false;
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case TD(TD_A_LAYER):  // 特定のタップダンスキーに適用
+        case TD(TD_ALT_LAYER):  // 特定のタップダンスキーに適用
             return TAPPING_TERM;  // タップ判定時間を100msにする
         default:
             return TAPPING_TERM;  // デフォルト値を使用
@@ -97,10 +97,9 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 
 void dance_a_layer_alt_finished(tap_dance_state_t *state, void *user_data) {
     if (state->count == 1 && !state->pressed) {
-    //if (state->count == 1 && !state->interrupted && !state->pressed) {
-        tap_code(KC_RALT);  // 短押しなら「A」を入力
+        tap_code(KC_APP);  // 短押し
     } else {
-        layer_on(WIN_A_TAP_DANCE);  // 長押しならレイヤー1へ
+        layer_on(WIN_ALT_LAYER);  // 長押し
         register_code(KC_RALT);  // Altを押す
         alt_held = true;
     }
@@ -109,13 +108,13 @@ void dance_a_layer_alt_finished(tap_dance_state_t *state, void *user_data) {
 void dance_a_layer_alt_reset(tap_dance_state_t *state, void *user_data) {
     if (alt_held) {
         unregister_code(KC_RALT);  // Altキーを離す
-        layer_off(WIN_A_TAP_DANCE);  // レイヤー1を解除
+        layer_off(WIN_ALT_LAYER);  // レイヤー1を解除
         alt_held = false;
     }
 }
 
 tap_dance_action_t tap_dance_actions[] = {
-    [TD_A_LAYER] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_a_layer_alt_finished, dance_a_layer_alt_reset)
+    [TD_ALT_LAYER] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dance_a_layer_alt_finished, dance_a_layer_alt_reset)
 };
 
 
@@ -124,15 +123,5 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_record_keychron_common(keycode, record)) {
         return false;
     }
-
-    // TD_A_LAYER の処理を追加
-    // switch (keycode) {
-    //     case TD(TD_A_LAYER):
-    //         if (!record->event.pressed) {
-    //             layer_off(WIN_A_TAP_DANCE); // レイヤーを解除
-    //             unregister_code(KC_LALT);  // Altキーを離す
-    //         }
-    //         return false;  // デフォルトの処理を無効化
-    // }
     return true;
 }
